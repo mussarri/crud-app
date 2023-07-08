@@ -38,11 +38,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(express.static("upload"))
+
 app.set('view engine', 'ejs')
 
 app.use('', routes);
-
-app.get("/", (req, res) => res.send("hello world"));
 
 app.listen(PORT, () => {
   console.log(`Server started at localhost:${PORT}`);
