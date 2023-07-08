@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import session from "express-session";
+import routes from './routes/routes.js';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
 
 app.set('view engine', 'ejs')
 
+app.use('', routes);
 
 app.get("/", (req, res) => res.send("hello world"));
 
