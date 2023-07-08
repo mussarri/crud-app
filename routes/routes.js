@@ -1,8 +1,12 @@
-import express from 'express'
+import express from "express";
 const router = express.Router();
 
-router.get('/users', (req,res) => {
-    res.send("All users")
-})
+router.get("/", (req, res) => {
+  res.render("index", { title: "Home Page" });
+});
 
-export default router
+router.get("/add", (req, res) => {
+  res.render("add_user", { title: "Add User" });
+});
+
+export default router;
