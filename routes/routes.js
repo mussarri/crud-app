@@ -2,6 +2,8 @@ import express from "express";
 const router = express.Router();
 import multer from "multer";
 import User from "../models/users.js";
+import { unlink, stat } from "node:fs";
+import { deleteUser, createUser, getAllUsers } from "../models/users.js";
 
 // image upload
 var storage = multer.diskStorage({
@@ -15,38 +17,50 @@ var storage = multer.diskStorage({
 
 var upload = multer({ storage: storage });
 
-router.get("/", async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.render("index", { title: "Users", users });
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Error retrieving users");
-  }
-});
+router.get("/", getAllUsers);
 
 router.get("/add", (req, res) => {
   res.render("add_user", { title: "Add User" });
 });
 
-router.post("/add", upload.single("image"), async (req, res) => {
-  console.log(req);
-  const user = new User({
+router.post("/add", upload.single("image"), createUser);
+
+router.get("/:id/edit", async (req, res) => {
+  const user = await User.findById(req.params.id);
+  if (user) {
+    res.render("edit_user", { title: "Edit User", user });
+  } else {
+    res.send("error");
+  }
+});
+
+router.post("/:id/update", upload.single("image"), async (req, res) => {
+  const id = req.params.id;
+  let newImage = "";
+  if (req.file) {
+    newImage = req.file.filename;
+    unlink("upload/" + req.body.old_image, (err) => {
+      if (err) throw err;
+      console.log("Image was deleted");
+    });
+  }
+  const updatedUser = await User.findByIdAndUpdate(id, {
     name: req.body.name,
     email: req.body.email,
-    phone: req.body.phone,
-    image: req.file.filename,
+    phone: req.body.email,
+    image: newImage,
   });
-  const newUser = await user.save();
-  if (newUser) {
+  if (updatedUser) {
     req.session.message = {
       type: "success",
-      message: "User added successfully!",
+      message: "User updated successfully!",
     };
     res.redirect("/");
   } else {
     res.json({ message: "error", type: "danger" });
   }
 });
+
+router.delete("/:id", deleteUser);
 
 export default router;

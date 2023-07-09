@@ -2,10 +2,9 @@ import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
 import session from "express-session";
+import methodOverride from "method-override";
 
-
-import routes from './routes/routes.js';
-
+import routes from "./routes/routes.js";
 
 dotenv.config();
 
@@ -21,8 +20,14 @@ db.once("open", () => console.log("Connected the database"));
 
 // midlewares
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+app.use(
+  methodOverride("_method", {
+    methods: ["POST", "GET"],
+  })
+);
 
 app.use(
   session({
@@ -38,11 +43,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(express.static("upload"))
+app.use(express.static("upload"));
 
-app.set('view engine', 'ejs')
+app.set("view engine", "ejs");
 
-app.use('', routes);
+app.use("", routes);
 
 app.listen(PORT, () => {
   console.log(`Server started at localhost:${PORT}`);

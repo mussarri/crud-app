@@ -39,10 +39,11 @@
             <td><%= user.email %></td>
             <td><%= user.phone %></td>
             <td style="font-size: 20px">
-              <a href="" class="text-success"
+              <a href="/<%= user.id %>/edit" class="text-success"
                 ><i class="fa-solid fa-edit fa-lg"></i
               ></a>
-              <a href="" class="text-danger"
+              <a href="/<%= user.id %>?_method=DELETE" class="text-danger"
+                onclick="return confirm('Are you sure?')"
                 ><i class="fa-solid fa-remove fa-lg"></i
               ></a>
             </td>
